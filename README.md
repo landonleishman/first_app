@@ -1,50 +1,63 @@
-# Welcome to your Expo app 👋
+# HW3 - Emotional Tracker App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is an Expo React Native app for tracking emotions and feelings, built for a software development class.
 
-## Get started
+## About the App
 
-1. Install dependencies
+The Emotional Tracker is a feelings journal app that helps users:
+- Track daily emotions using an emotion wheel
+- Record emotional intensity levels
+- Add notes about what triggered certain feelings
+- View emotional patterns over time
 
+## Features
+
+- **Multi-page Navigation**: Home, Add Entry, Entry Detail pages
+- **Redux State Management**: Centralized state for journal entries
+- **Parent-Child Components**: Reusable UI components
+- **React Hooks**: useState, useEffect, and Redux hooks
+- **Emotion Tracking**: 6 basic emotions with intensity levels
+
+## Technical Requirements Met
+
+✅ **React Hooks**: useState, useAppSelector, useAppDispatch  
+✅ **Parent-Child Components**: HomeScreen → JournalEntryCard  
+✅ **Multi-page Navigation**: expo-router implementation  
+✅ **Redux Store**: Actions, reducers, and dispatch functionality  
+
+## Get Started
+
+1. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Start the app
-
+2. Start the app:
    ```bash
-   npx expo start
+   npm run web
    ```
 
-In the output, you'll find options to open the app in a
+3. Open your browser to `http://localhost:8081`
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Project Structure
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+```
+app/
+├── index.tsx          # Home page (journal entries list)
+├── add-entry.tsx      # Add new emotion entry
+└── entry/[id].tsx      # Entry detail page
 
-## Get a fresh project
+components/
+└── JournalEntryCard.tsx  # Individual entry display
 
-When you're ready, run:
-
-```bash
-npm run reset-project
+store/
+├── index.ts           # Redux store configuration
+├── journalSlice.ts    # Journal entries reducer
+└── hooks.ts           # Typed Redux hooks
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Previous Projects
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+This repository also contains:
+- `data5570_mycode/` - Python code examples
+- `myproject/` - Django web application
