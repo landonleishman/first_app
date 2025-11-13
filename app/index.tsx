@@ -1,20 +1,37 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Link } from 'expo-router';
-import { useAppSelector } from '../store/hooks';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { fetchEntries } from '../store/journalSlice';
 import JournalEntryCard from '../components/JournalEntryCard';
 
 export default function HomeScreen() {
+  const dispatch = useAppDispatch();
   const entries = useAppSelector(state => state.journal.entries);
+  const loading = useAppSelector(state => state.journal.loading);
+  const error = useAppSelector(state => state.journal.error);
+
+  useEffect(() => {
+    // Fetch entries when component mounts
+    dispatch(fetchEntries());
+  }, [dispatch]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>My Emotional Tracker</Text>
       <Text style={styles.subtitle}>Track your feelings and understand your emotions</Text>
       
+      {error && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Error: {error}</Text>
+        </View>
+      )}
+      
       <ScrollView style={styles.entriesList}>
         <Text style={styles.sectionTitle}>Recent Entries</Text>
-        {entries.length === 0 ? (
+        {loading ? (
+          <ActivityIndicator size="large" color="#4CAF50" style={styles.loader} />
+        ) : entries.length === 0 ? (
           <Text style={styles.emptyText}>No entries yet. Add your first entry!</Text>
         ) : (
           entries.map(entry => (
@@ -77,5 +94,18 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: '600',
+  },
+  loader: {
+    marginTop: 50,
+  },
+  errorContainer: {
+    backgroundColor: '#ffebee',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  errorText: {
+    color: '#c62828',
+    fontSize: 14,
   },
 });

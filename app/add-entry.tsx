@@ -1,35 +1,39 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
-import { useAppDispatch } from '../store/hooks';
-import { addEntry } from '../store/journalSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { createEntry } from '../store/journalSlice';
 
 export default function AddEntryScreen() {
   const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null);
   const [intensity, setIntensity] = useState(5);
   const [notes, setNotes] = useState('');
   const dispatch = useAppDispatch();
+  const loading = useAppSelector(state => state.journal.loading);
+  const error = useAppSelector(state => state.journal.error);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!selectedEmotion) {
-      Alert.alert('Please select an emotion');
+      Alert.alert('Error', 'Please select an emotion');
       return;
     }
     
-    // Create new entry
+    // Create new entry (without id - backend will generate it)
     const newEntry = {
-      id: Date.now().toString(),
       date: new Date().toISOString().split('T')[0],
       primaryEmotion: selectedEmotion,
       intensity: intensity,
       notes: notes,
     };
     
-    // Save to Redux store
-    dispatch(addEntry(newEntry));
-    
-    // Navigate back to home
-    router.back();
+    try {
+      // Save to backend via Redux thunk
+      await dispatch(createEntry(newEntry)).unwrap();
+      // Navigate back to home on success
+      router.back();
+    } catch (err) {
+      Alert.alert('Error', error || 'Failed to save entry. Please try again.');
+    }
   };
 
   return (
@@ -96,8 +100,22 @@ export default function AddEntryScreen() {
         />
       </View>
       
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Save Entry</Text>
+      {error && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Error: {error}</Text>
+        </View>
+      )}
+      
+      <TouchableOpacity 
+        style={[styles.saveButton, loading && styles.saveButtonDisabled]} 
+        onPress={handleSave}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Text style={styles.saveButtonText}>Save Entry</Text>
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -203,5 +221,18 @@ const styles = StyleSheet.create({
   },
   selectedIntensityButtonText: {
     color: 'white',
+  },
+  saveButtonDisabled: {
+    opacity: 0.6,
+  },
+  errorContainer: {
+    backgroundColor: '#ffebee',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  errorText: {
+    color: '#c62828',
+    fontSize: 14,
   },
 });

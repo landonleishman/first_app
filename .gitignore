@@ -41,3 +41,24 @@ app-example
 # generated native folders
 /ios
 /android
+
+# Python / Django
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.db
+*.sqlite3
+db.sqlite3
+myproject/db.sqlite3
+*.log
+venv/
+env/
+ENV/
+.env
+
+# Django
+*.pot
+*.pyc
+local_settings.py

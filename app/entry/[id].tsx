@@ -1,18 +1,29 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
+import { useAppSelector } from '../../store/hooks';
 
 export default function EntryDetailScreen() {
   const { id } = useLocalSearchParams();
+  const entries = useAppSelector(state => state.journal.entries);
   
-  // TODO: Get entry from Redux store using the id
-  const entry = {
-    id: id,
-    date: '2024-01-15',
-    emotion: 'SAD',
-    intensity: 7,
-    notes: 'Feeling disconnected from friends'
-  };
+  // Find the entry by id
+  const entry = entries.find(e => e.id === id?.toString());
+
+  if (!entry) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Entry Not Found</Text>
+        <Text style={styles.errorText}>The entry you're looking for doesn't exist.</Text>
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={() => router.back()}
+        >
+          <Text style={styles.backButtonText}>← Back to Journal</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -20,9 +31,14 @@ export default function EntryDetailScreen() {
       
       <View style={styles.entryCard}>
         <Text style={styles.date}>{entry.date}</Text>
-        <Text style={styles.emotion}>Emotion: {entry.emotion}</Text>
+        <Text style={styles.emotion}>Emotion: {entry.primaryEmotion}</Text>
+        {entry.secondaryEmotion && (
+          <Text style={styles.secondaryEmotion}>Secondary: {entry.secondaryEmotion}</Text>
+        )}
         <Text style={styles.intensity}>Intensity: {entry.intensity}/10</Text>
-        <Text style={styles.notes}>Notes: {entry.notes}</Text>
+        {entry.notes && (
+          <Text style={styles.notes}>Notes: {entry.notes}</Text>
+        )}
       </View>
       
       <TouchableOpacity 
@@ -85,6 +101,18 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
+  },
+  secondaryEmotion: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 10,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#c62828',
+    textAlign: 'center',
+    marginTop: 20,
+    marginBottom: 30,
   },
 });
 
